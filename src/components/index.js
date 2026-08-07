@@ -12,9 +12,7 @@ import Login from "./Login";
 import PostForm from "./post-form/PostForm.jsx";
 import PostCard from "./PostCard.jsx";
 import AuthLayout from "./AuthLayout.jsx";
-
-
-
+import PageLoader from "./PageLoader.jsx";
 
 export {
   Header,
@@ -31,4 +29,5 @@ export {
   PostForm,
   PostCard,
   AuthLayout,
+  PageLoader,
 };

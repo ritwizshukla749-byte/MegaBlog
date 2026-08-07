@@ -1,19 +1,19 @@
-import React from "react";
-import { StrictMode } from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App.jsx";
 import store from "./store/store.js";
-import { AuthLayout, Login } from "./components/index.js";
-import Home from "./pages/Home.jsx";
+import { AuthLayout, Login, PageLoader } from "./components/index.js";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Signup from "./pages/Signup.jsx";
-import AllPosts from "./pages/AllPosts.jsx";
-import AddPost from "./pages/AddPost.jsx";
-import EditPost from "./pages/EditPost.jsx";
-import Post from "./pages/Post.jsx";
+
+/* eslint-disable react-refresh/only-export-components */
+const Home = lazy(() => import("./pages/Home.jsx"));
+const Signup = lazy(() => import("./pages/Signup.jsx"));
+const AllPosts = lazy(() => import("./pages/AllPosts.jsx"));
+const AddPost = lazy(() => import("./pages/AddPost.jsx"));
+const EditPost = lazy(() => import("./pages/EditPost.jsx"));
+const Post = lazy(() => import("./pages/Post.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -22,7 +22,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Home />
+          </Suspense>
+        ),
       },
       {
         path: "/login",
@@ -36,7 +40,9 @@ const router = createBrowserRouter([
         path: "/signup",
         element: (
           <AuthLayout authentication={false}>
-            <Signup />
+            <Suspense fallback={<PageLoader />}>
+              <Signup />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -44,8 +50,9 @@ const router = createBrowserRouter([
         path: "/all-posts",
         element: (
           <AuthLayout authentication>
-            {" "}
-            <AllPosts />
+            <Suspense fallback={<PageLoader />}>
+              <AllPosts />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -53,8 +60,9 @@ const router = createBrowserRouter([
         path: "/add-post",
         element: (
           <AuthLayout authentication>
-            {" "}
-            <AddPost />
+            <Suspense fallback={<PageLoader />}>
+              <AddPost />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -62,14 +70,19 @@ const router = createBrowserRouter([
         path: "/edit-post/:slug",
         element: (
           <AuthLayout authentication>
-            {" "}
-            <EditPost />
+            <Suspense fallback={<PageLoader />}>
+              <EditPost />
+            </Suspense>
           </AuthLayout>
         ),
       },
       {
         path: "/post/:slug",
-        element: <Post />,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Post />
+          </Suspense>
+        ),
       },
     ],
   },
