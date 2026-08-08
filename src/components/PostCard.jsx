@@ -1,23 +1,68 @@
 import appwriteService from "../appwrite/config";
 import { Link } from "react-router-dom";
+import AuthorChip from "./AuthorChip.jsx";
+import formatDate from "../utils/formatDate";
+import stripHtml from "../utils/stripHtml";
 
-function PostCard({ $id, title, featuredImage }) {
+function PostCard({
+  $id,
+  title,
+  featuredImage,
+  content,
+  $createdAt,
+  authorName,
+}) {
   return (
-    <Link to={`/post/${$id}`}>
-      <div className="w-full bg-gray-100 rounded-xl p-4">
+    <Link
+      to={`/post/${$id}`}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] dark:border-stone-800 dark:bg-stone-900"
+    >
+      <div className="aspect-video w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
         {featuredImage ? (
           <img
             src={appwriteService.getFileView(featuredImage)}
             alt={title}
-            className="w-full h-52 object-cover rounded-xl"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="w-full h-52 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500">
-            No image
+          <div className="flex h-full w-full items-center justify-center text-stone-400 dark:text-stone-500">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="m21 15-5-5L5 21" />
+            </svg>
           </div>
         )}
       </div>
-      <h2 className="text-xl font-bold">{title}</h2>
+
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <h3 className="font-display text-xl leading-snug font-semibold text-stone-900 line-clamp-2 dark:text-stone-100">
+          {title}
+        </h3>
+        <p className="text-sm leading-relaxed text-stone-500 line-clamp-2 dark:text-stone-400">
+          {stripHtml(content)}
+        </p>
+
+        <div className="mt-auto flex items-center gap-3 border-t border-stone-100 pt-4 dark:border-stone-800">
+          {authorName && <AuthorChip name={authorName} />}
+          <time
+            dateTime={$createdAt}
+            className="text-xs text-stone-400 dark:text-stone-500"
+          >
+            {formatDate($createdAt)}
+          </time>
+        </div>
+      </div>
     </Link>
   );
 }

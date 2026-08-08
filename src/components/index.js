@@ -13,6 +13,7 @@ import PostForm from "./post-form/PostForm.jsx";
 import PostCard from "./PostCard.jsx";
 import AuthLayout from "./AuthLayout.jsx";
 import PageLoader from "./PageLoader.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 export {
   Header,
@@ -30,4 +31,5 @@ export {
   PostCard,
   AuthLayout,
   PageLoader,
+  ThemeToggle,
 };
