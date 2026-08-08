@@ -61,7 +61,7 @@ function App() {
         position="top-center"
         toastOptions={{
           className:
-            "!border !border-stone-200 !bg-white !text-stone-900 !shadow-lg dark:!border-stone-700 dark:!bg-stone-900 dark:!text-stone-100",
+            "!border !border-stone-200 !bg-white !text-stone-900 !shadow-lg dark:!border-white/15 dark:!bg-[#111114] dark:!text-zinc-100",
           success: {
             iconTheme: { primary: "#10b981", secondary: "#ffffff" },
           },

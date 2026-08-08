@@ -50,6 +50,7 @@ export default function Post() {
   }, [slug, navigate]);
 
   const deletePost = async () => {
+    if (!window.confirm("Delete this post? This cannot be undone.")) return;
     try {
       const status = await appwriteService.deletePost(post.$id);
       if (!status) throw new Error("Delete failed");
@@ -83,22 +84,13 @@ export default function Post() {
 
   if (!post) return null;
 
-  const intro = (() => {
-    const text = (post.content || "")
-      .replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (!text) return "";
-    return text.length > 140 ? `${text.slice(0, 140).trim()}…` : text;
-  })();
-
   return (
     <section className="py-12 sm:py-16">
       <Container>
         <div className="mx-auto max-w-3xl">
           <div className="mb-6 flex items-center justify-between gap-3">
             <Link
-              to="/all-posts"
+              to={isAuthor ? "/all-posts" : "/"}
               className="inline-block text-sm font-medium text-stone-500 transition-colors hover:text-stone-800 dark:text-zinc-400 dark:hover:text-white"
             >
               ← Back to all posts
@@ -152,12 +144,6 @@ export default function Post() {
             <h1 className="font-display text-4xl leading-tight font-bold tracking-tight text-stone-900 dark:text-white sm:text-6xl">
               {post.title}
             </h1>
-
-            {intro && (
-              <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-stone-500 dark:text-zinc-400">
-                {intro}
-              </p>
-            )}
 
             <div className="mt-6 flex items-center justify-center gap-3 text-sm">
               {post.authorName && (

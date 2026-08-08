@@ -60,11 +60,11 @@ npm run dev
 1. Create a project at [Appwrite Cloud](https://cloud.appwrite.io) (or self-hosted).
 2. Create a **Database** → **Posts collection** with these attributes:
    - `title` (string)
-   - `slug` (string, unique)
    - `content` (string)
    - `featuredImage` (string) — Appwrite file ID
-   - `status` (string: `active` / `inactive`)
+   - `status` (boolean) — `true` = published, `false` = draft
    - `userId` (string)
+   - **Slug is not an attribute** — the app uses the post slug as the Appwrite document ID.
 3. Configure **collection permissions**: read = `any`, create/update/delete = `users`.
 4. Add **indexes**: `status` and `$createdAt`.
 5. Create a **Storage bucket** for featured images (read = `any`, write = `users`).
@@ -76,6 +76,8 @@ npm run dev
 2. Add the five `VITE_*` variables from `.env` to the project's **Environment Variables**.
 3. Framework preset: **Vite** (auto-detected). Build command `npm run build`, output `dist`.
 4. The included `vercel.json` rewrites all routes to `index.html` so deep links like `/post/:slug` work.
+5. In the Appwrite Console, add your production domain (e.g. `https://megablog.vercel.app`) under
+   **Project Settings → Domains**. Without this, requests from the deployed origin are blocked (CORS).
 
 > **Note:** TinyMCE assets are self-hosted under `public/tinymce` (v6.8.6, MIT). No cloud CDN or API key is used, so the editor works offline and on any host.
 

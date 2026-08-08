@@ -128,7 +128,7 @@ function Auth({ initialTab = "login" }) {
               className={`flex-1 border-b-2 px-4 py-4 text-sm transition-colors ${
                 initialTab === tab.key
                   ? "border-indigo-600 font-bold text-stone-900 dark:border-pink-500 dark:text-white"
-                  : "border-transparent font-medium text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
+                  : "border-transparent font-medium text-stone-400 hover:text-stone-600 dark:hover:text-zinc-300"
               }`}
             >
               {tab.label}
