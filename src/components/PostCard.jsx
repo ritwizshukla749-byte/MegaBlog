@@ -7,7 +7,7 @@ function PostCard({ $id, title, featuredImage }) {
       <div className="w-full bg-gray-100 rounded-xl p-4">
         {featuredImage ? (
           <img
-            src={appwriteService.getFilePreview(featuredImage)}
+            src={appwriteService.getFileView(featuredImage)}
             alt={title}
             className="w-full h-52 object-cover rounded-xl"
           />
