@@ -22,14 +22,14 @@ function Header() {
   const navItems = authStatus ? authNav : guestNav;
 
   const navClass = ({ isActive }) =>
-    `rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+    `rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
       isActive
-        ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
-        : "text-stone-600 hover:text-stone-900 dark:text-stone-300 dark:hover:text-white"
+        ? "bg-indigo-600 text-white dark:border dark:border-pink-500/50 dark:bg-pink-500/20 dark:text-pink-500"
+        : "text-stone-600 hover:text-stone-900 dark:text-zinc-300 dark:hover:text-white"
     }`;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/70 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/70">
+    <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/80 backdrop-blur-xl dark:border-white/5 dark:bg-[#0a0a0c]/80">
       <Container>
         <div className="flex h-16 items-center justify-between">
           <Link to="/" aria-label="MegaBlog home">
@@ -60,7 +60,7 @@ function Header() {
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label="Toggle navigation menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800 lg:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 dark:text-zinc-300 dark:hover:bg-zinc-800 lg:hidden"
           >
             {menuOpen ? (
               <svg
@@ -95,7 +95,7 @@ function Header() {
         <nav
           id="mobile-nav"
           aria-label="Mobile"
-          className="border-t border-stone-200 bg-white/95 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/95 lg:hidden"
+          className="border-t border-stone-200 bg-white/95 backdrop-blur-xl dark:border-white/5 dark:bg-[#0a0a0c]/95 lg:hidden"
         >
           <Container>
             <div className="flex flex-col gap-1 py-3">

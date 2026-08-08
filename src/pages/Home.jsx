@@ -14,9 +14,9 @@ function FeaturedCard({ post }) {
   return (
     <Link
       to={`/post/${$id}`}
-      className="group grid overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] dark:border-stone-800 dark:bg-stone-900 md:grid-cols-2"
+      className="group grid overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#111114] md:grid-cols-2"
     >
-      <div className="aspect-video w-full overflow-hidden bg-stone-100 dark:bg-stone-800 md:aspect-auto md:h-full">
+      <div className="aspect-video w-full overflow-hidden bg-stone-100 dark:bg-zinc-800 md:aspect-auto md:h-full">
         {featuredImage ? (
           <img
             src={appwriteService.getFileView(featuredImage)}
@@ -24,7 +24,7 @@ function FeaturedCard({ post }) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-stone-400 dark:text-stone-500">
+          <div className="flex h-full w-full items-center justify-center text-stone-400 dark:text-zinc-500">
             <svg
               width="48"
               height="48"
@@ -45,20 +45,20 @@ function FeaturedCard({ post }) {
       </div>
 
       <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
-        <span className="text-xs font-medium tracking-[0.05em] text-indigo-600 uppercase dark:text-indigo-400">
+        <span className="text-xs font-medium tracking-[0.05em] text-indigo-600 uppercase dark:text-pink-400">
           Featured
         </span>
-        <h2 className="font-display text-2xl leading-tight font-semibold text-stone-900 dark:text-stone-100 sm:text-3xl">
+        <h2 className="font-display text-2xl leading-tight font-semibold text-stone-900 dark:text-white sm:text-3xl">
           {title}
         </h2>
-        <p className="text-base leading-relaxed text-stone-500 line-clamp-3 dark:text-stone-400">
+        <p className="text-base leading-relaxed text-stone-500 line-clamp-3 dark:text-zinc-400">
           {stripHtml(content)}
         </p>
         <div className="flex items-center gap-3">
           {authorName && <AuthorChip name={authorName} />}
           <time
             dateTime={$createdAt}
-            className="text-xs text-stone-400 dark:text-stone-500"
+            className="text-xs text-stone-400 dark:text-zinc-500"
           >
             {formatDate($createdAt)}
           </time>
@@ -109,13 +109,13 @@ function Home() {
     <section className="py-12 sm:py-16">
       <Container>
         <div className="mx-auto mb-14 max-w-2xl text-center sm:mb-20">
-          <h1 className="font-display text-4xl leading-tight font-bold tracking-tight text-stone-900 dark:text-stone-100 sm:text-5xl">
+          <h1 className="font-display text-4xl leading-tight font-bold tracking-tight text-stone-900 dark:text-white sm:text-5xl">
             Read. Write.{" "}
             <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
               Belong.
             </span>
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-stone-600 dark:text-stone-300">
+          <p className="mt-5 text-lg leading-relaxed text-stone-600 dark:text-zinc-300">
             A modern editorial blog for thoughtful stories. Share what you
             know, and discover what others are writing.
           </p>
@@ -164,7 +164,7 @@ function Home() {
           </div>
         ) : posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-stone-400 dark:bg-zinc-800 dark:text-zinc-500">
               <svg
                 width="28"
                 height="28"
@@ -180,10 +180,10 @@ function Home() {
                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
               </svg>
             </div>
-            <h2 className="font-display text-xl font-semibold text-stone-900 dark:text-stone-100">
+            <h2 className="font-display text-xl font-semibold text-stone-900 dark:text-white">
               No posts yet — be the first!
             </h2>
-            <p className="max-w-sm text-sm text-stone-500 dark:text-stone-400">
+            <p className="max-w-sm text-sm text-stone-500 dark:text-zinc-400">
               Share your first story with the community.
             </p>
             <Link to={authStatus ? "/add-post" : "/login"}>

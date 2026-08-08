@@ -12,7 +12,7 @@ publication, not a dashboard.
 ## 2. Brand
 - **Name:** MegaBlog
 - **Logo:** SVG wordmark — rounded-square gradient mark (indigo→violet) with a white "M" + "MegaBlog" in
-  Inter SemiBold beside it. Prop: `width` (px). Used in header (~32px) and footer (~40px).
+  Sora SemiBold beside it. Prop: `width` (px). Used in header (~32px) and footer (~40px).
 - **Favicon:** `public/favicon.svg` — the gradient "M" mark alone on transparent bg.
 - **Page title:** `MegaBlog` (+ meta description).
 
@@ -27,18 +27,21 @@ Tailwind palette (built-in) + one gradient accent.
 | elevated | `stone-100` | hover fills |
 | text-strong | `stone-900` | headings, body |
 | text-muted | `stone-500` | secondary text, captions |
-| border | `stone-200` | dividers, inputs, cards |
+| border | `stone-200` | dividers, cards (inputs use `stone-300` for field visibility) |
 | accent | indigo-500 → purple-500 gradient | primary buttons, links, active nav, hero |
 
 ### Dark mode (manual selector; defaults to OS preference)
+"Neon Tokyo" — deep black base, neon-pink accent.
 | Token | Value |
 |---|---|
-| bg | `stone-950 #0c0a09` |
-| surface | `stone-900` |
-| elevated | `stone-800` |
-| text-strong | `stone-100` |
-| text-muted | `stone-400` |
-| border | `stone-800` |
+| bg | `#0a0a0c` |
+| surface | `#111114` |
+| elevated | `zinc-800 #27272a` |
+| text-strong | `white` |
+| text-muted | `zinc-400 #a1a1aa` |
+| border | `white/10` (inputs `white/15`) |
+| accent | `pink-500 #ff2d78` (links, active states, actions) |
+| glow | `0 0 15px rgba(219,39,119,0.5)` on delete/primary actions |
 
 Theme switching is **class-based**, not media-query based:
 - `src/index.css` defines `@custom-variant dark (&:where(.dark, .dark *));` so `dark:` utilities
@@ -58,13 +61,13 @@ success `emerald-500` · danger `rose-500` · warning `amber-500` · info `sky-5
 ## 4. Typography
 | Role | Font | Usage |
 |---|---|---|
-| Display | **Source Serif 4** (serif) | hero `h1`, post titles, featured card title |
-| UI / Body | **Inter** (sans) | nav, buttons, forms, body copy, metadata |
+| Display | **Sora** | hero `h1`, post titles, featured card title |
+| UI / Body | **Sora** (geometric sans) | nav, buttons, forms, body copy, metadata, article body copy |
 | Mono | **JetBrains Mono** | code blocks in post content |
 
 Loaded via Google Fonts in `index.html` with graceful system fallbacks.
-- **Scale:** `h1` 2.5–3rem, `h2` 1.5rem, body 1rem/1.6, small 0.875rem, caption 0.75rem
-- **Weights:** sans 400/500/600/700; display 600/700
+- **Scale:** `h1` 2.5–3rem (post detail up to `text-6xl`), `h2` 1.5rem, body 1rem/1.6, small 0.875rem, caption 0.75rem
+- **Weights:** 400/500/600/700/800; post detail headline `tracking-tight`
 - Line height ~1.6 for reading; letter-spacing normal
 
 ## 5. Layout & Spacing
@@ -74,7 +77,7 @@ Loaded via Google Fonts in `index.html` with graceful system fallbacks.
 - **Section rhythm:** `section-gap` 5rem desktop / 3rem tablet / fluid on mobile; 1rem mobile margin
 - **Spacing scale:** Tailwind defaults (`space-y-6`, `py-16`, `gap-6`, …)
 - **Radius:** large containers/cards `rounded-2xl`, functional `rounded-lg`, images `rounded-xl`
-- **Depth (tonal layering, minimal shadows):** Level 0 = base canvas (stone-50/950); Level 1 = white/stone-900 card + 1px border (stone-200/800); hover lift = `0 10px 25px -5px rgba(0,0,0,0.05)` + `-2px` translate; overlays/menus = 12px backdrop blur
+- **Depth (tonal layering, minimal shadows):** Level 0 = base canvas (light stone-50 / dark `#0a0a0c`); Level 1 = card (light white / dark `#111114`) + 1px border (light stone-200 / dark `white/10`); hover lift = `0 10px 25px -5px rgba(0,0,0,0.05)` + `-2px` translate; overlays/menus = 12px backdrop blur
 
 ## 6. Components
 
@@ -83,32 +86,35 @@ Props: `variant` (`primary` gradient / `secondary` white+border / `danger` rose)
 Focus: `focus-visible:ring-2 ring-indigo-500 ring-offset-2`.
 
 ### Input / Select
-- Height `h-11`, `rounded-lg`, border `stone-200 dark:border-stone-800`, focus ring indigo.
-- Labels: small `text-stone-600` above field; error message in `rose-500`.
+- Height `h-11`, `rounded-lg`, border `stone-300` / dark `white/15`, bg `white` / dark `#111114`,
+  padding `px-4`, focus ring indigo (dark pink).
+- Labels: small `font-semibold text-stone-700 dark:text-zinc-300` above field; error message in `rose-500`.
 - `Select` styled like Input with chevron.
 
 ### PostCard
-`Link` → `rounded-2xl` bordered card (white/stone-900, 1px stone-200/800). Top: `aspect-video` image
-(`object-cover`, "No image" placeholder) → serif title (2-line clamp) → HTML-stripped excerpt
-(`line-clamp-2`) → byline row (author chip if `authorName` present, then formatted date).
+`Link` → `rounded-2xl` bordered card (light white / dark `#111114`, 1px light stone-200 / dark `white/10`).
+Top: `aspect-video` image (`object-cover`, "No image" placeholder) → Sora title (2-line clamp) →
+HTML-stripped excerpt (`line-clamp-2`) → byline row (author chip if `authorName` present, then formatted date).
 Hover: soft shadow `0 10px 25px -5px rgba(0,0,0,0.05)` + `-translate-y-0.5`. Whole card clickable.
 Category chip deferred (no category data yet; see §7 data notes).
 
 ### AuthorChip
-Circular 24px gradient (indigo→purple) initials avatar + Inter Medium name label.
+Circular 24px gradient (indigo→purple) initials avatar + Sora Medium name label.
 
 ### PostCardSkeleton
 `animate-pulse` card mirroring PostCard layout (image block + title/excerpt/date bars) for loading grids.
 
 ### Header
-- Sticky, `backdrop-blur bg-white/70 dark:bg-stone-950/70`, `border-b`.
+- Sticky, `backdrop-blur-xl bg-white/80 dark:bg-[#0a0a0c]/80`, `border-b` (`dark:border-white/5`).
 - Left: Logo (→ `/`). Right: `<NavLink>`s — Home, All Posts, Add Post (auth) / Login, Signup (guest); ThemeToggle (sun/moon); Logout button (auth).
-- Active NavLink: `bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300` pill.
+- Active NavLink: solid `bg-indigo-600 text-white` pill (`rounded-full px-4 py-1.5`); dark = neon pink glow
+  (`dark:bg-pink-500/20 dark:text-pink-500 dark:border dark:border-pink-500/50`).
 - Mobile (< `lg`): hamburger toggles a stacked menu (links + ThemeToggle + Logout).
 
 ### Footer
 3 zones: brand blurb + logo · real links (Home, All Posts) · GitHub link.
-Bottom bar: `© {currentYear} MegaBlog. All rights reserved.`
+Dark = `#111114` surface, pink links (`dark:text-pink-500 dark:hover:text-pink-400`).
+Bottom bar: `© {currentYear} MegaBlog. All rights reserved.` (dark `zinc-600`).
 
 ### PageLoader / Skeletons
 - Page loader: centered themed spinner.
@@ -135,17 +141,55 @@ Same skeleton/empty/error states.
 - **Category chip:** deferred — no category attribute exists yet.
 
 ### Post
-Back link → centered `max-w-3xl`: constrained image (`max-h-96 w-full object-cover rounded-2xl`),
-serif title, byline (date, author), then `.post-content` typography. Author-only Edit/Delete actions.
-`DOMPurify.sanitize` + `html-react-parser` unchanged.
+Editorial "Post Detail (v3)" reading layout (centered `max-w-3xl`):
+- Loading → `PageLoader`; not found/error → redirect home.
+- Top bar above the hero image: `← Back to all posts` link (`text-sm font-medium text-stone-500`) on the
+  left; author-only "Edit Post" (`border border-stone-300 text-stone-700 rounded-lg px-4 py-2`; dark =
+  `dark:border-pink-500/30 dark:text-pink-500 dark:hover:bg-pink-500/10`) and "Delete Post"
+  (`bg-red-700 text-white rounded-lg px-4 py-2` + trash icon; dark = `dark:bg-pink-600` +
+  `dark:shadow-[0_0_15px_rgba(219,39,119,0.5)]`) on the right.
+- Hero image: `aspect-video w-full object-cover rounded-2xl` (+ "No image" placeholder).
+- Centered header: `h1` (`text-4xl sm:text-6xl font-bold tracking-tight`), derived intro (first ~140 chars of stripped
+  content, `text-lg text-stone-500`), byline (avatar + "By {name}" via `AuthorChip` `size="md"
+  showBy`, then "{date} • {X} min read" with `readingTime` from word count).
+- Body: `.post-content` (`text-xl leading-relaxed`, light `stone-800` / dark `white`; `h2`
+  `text-3xl font-bold mt-12 mb-6`; pull-quote `blockquote` left-aligned `border-l-4`
+  `border-indigo-600` italic `text-2xl text-stone-600` — dark = neon pink `dark:bg-pink-500/5
+  dark:border-pink-500 dark:p-8 dark:rounded-r-xl dark:text-pink-100`; code blocks `rounded-xl p-8`
+  on `stone-100` / dark `#111114` + `border-white/10` + `shadow-inner`).
+- Code blocks are syntax-highlighted via **highlight.js** (`hljs.highlightElement` on `.post-content pre code`);
+  tokens = indigo/violet on light, neon pink/violet on dark (custom CSS, no stock theme).
+  `DOMPurify.sanitize` + `html-react-parser` unchanged.
+- Delete → `toast.success` / `toast.error`.
+Intentionally omitted (mock-only in the spec): category tag, Like/Share, Subscribe, mock nav links.
 
-### Login / Signup
-Centered `max-w-md` card (surface + shadow). Logo, heading, fields, submit with `loading` spinner,
-inline error banner on failure. Guest only (redirect if authed).
+### Auth (Login / Signup)
+Single tabbed card (`src/components/Auth.jsx`) used by both `/login` and `/signup` routes — tabs are
+URL-synced (Log In / Sign Up switch routes; refresh keeps the tab):
+- Logo above the card: 48px icon-only gradient `M` mark in a white `rounded-md shadow-sm` container.
+- Card: `max-w-md rounded-2xl`, `border-stone-200 dark:border-white/10`, `shadow-xl shadow-stone-200/50`.
+- Tabs: active = `border-b-2 border-indigo-600 font-bold` + `stone-900` (dark: `dark:border-pink-500 dark:text-white`);
+  inactive = `text-stone-400 hover:text-stone-600`.
+- Heading `text-3xl font-bold`: "Welcome back" / "Create your account". Rose error banner on failure.
+- Inputs with leading icons (envelope/lock/user), per global Input style; CTA `variant="auth"` (indigo-600→purple-600,
+  `font-bold tracking-wide`, `shadow-lg shadow-indigo-200/60`, uppercase label) with `loading` spinner + double-submit guard.
+- Below card: `© {year} MegaBlog.` + "Return to Home." link. Guest only (redirect if authed).
 
 ### Add / Edit Post (`PostForm`)
-`lg`: two-column — left `w-2/3` (title, slug, RTE), right `w-1/3` (featured image + preview, status select,
-submit). Stacked on mobile. Image resized client-side before upload.
+"Dashboard" layout `mx-auto max-w-6xl`, `grid gap-6 lg:grid-cols-3` (left `lg:col-span-2`, right `lg:col-span-1`).
+Every group is a `rounded-2xl border` surface card (light white / dark `#111114`) with a Sora panel heading:
+- **Content** (left): Title (`placeholder="Enter an engaging headline..."`), combined Slug input with static
+  `megablog.com/` prefix (auto-slug from title), TinyMCE RTE (full toolbar + menubar, placeholder text). Stacked on mobile.
+  RTE follows the theme via TinyMCE `oxide-dark` UI skin + `dark` content skin (remounts on toggle, content preserved).
+- **Publish** (right): Status Select (Active/Inactive) + dual actions — `Save Draft` (secondary, sets
+  `status:false`) and `Publish Post`/`Update Post` (primary gradient, sets `status:true`). Toasts on success/failure.
+- **Featured Image** (right): dashed dropzone (`bg-stone-50`, upload icon, "PNG, JPG, JPEG, GIF · Max 5MB"),
+  click or drag-drop, live preview via object URL (existing image via `getFileView` on edit).
+  Selected images are **client-side resized before upload**: `resizeImage` downscales to ≤1600px on the
+  longest edge at ~85% quality, keeping the original name/mime (PNG/GIF transparency preserved, JPEG fallback);
+  same-size images pass through unchanged.
+Page headings: "Create New Post" / "Edit Post" (`font-display text-3xl sm:text-4xl`).
+Organization (Category/Tags) panel omitted — no schema fields.
 
 ## 8. States
 | State | Pattern |
@@ -155,9 +199,14 @@ submit). Stacked on mobile. Image resized client-side before upload.
 | Error | `rose` banner + retry; toast on mutations |
 
 ## 9. Post Content Typography (`.post-content`)
-Stylized output for sanitized HTML: headings (serif), paragraphs, lists, `blockquote` (pull-quote:
-large centered Source Serif 4 with indigo accent bars top & bottom), `code`/`pre` (mono, surface bg),
-links (indigo underline), images (`rounded-xl max-w-full h-auto`), tables (borders), hr. Dark-mode aware.
+Stylized output for sanitized HTML: Sora `text-xl leading-relaxed` (light `stone-800` / dark `white`);
+`h2` `text-3xl font-bold mt-12 mb-6`; paragraphs, lists; `blockquote` (pull-quote: left-aligned,
+thick `border-l-4 border-indigo-600`, italic `text-2xl text-stone-600`; dark = neon pink
+`dark:bg-pink-500/5 dark:border-pink-500 dark:p-8 dark:rounded-r-xl dark:text-pink-100`); `code`/`pre`
+(mono, `rounded-xl p-8` on `stone-100`; dark = `#111114` + `border-white/10` + `shadow-inner`); links
+(indigo underline; dark pink); images (`rounded-xl max-w-full h-auto`); tables (borders); hr.
+Code blocks syntax-highlighted with highlight.js — indigo/violet tokens on light, neon pink/violet on dark.
+Dark-mode aware.
 
 ## 10. Accessibility
 - Visible `:focus-visible` rings everywhere
@@ -180,6 +229,7 @@ Nav collapses < `lg`; grids 1 → 2 → 3; form stacks; type scales down on smal
 | Brand | `src/components/Logo.jsx` |
 | Layout | `src/App.jsx`, `Header.jsx`, `Footer.jsx`, `PageLoader.jsx`, `Container.jsx` |
 | UI kit | `Button.jsx`, `Input.jsx`, `Select.jsx` |
-| Pages | `Home.jsx`, `AllPosts.jsx`, `Post.jsx`, `Login.jsx`, `Signup.jsx`, `PostForm.jsx` |
-| Image resize | `src/utils/imageResize.js` |
+| Pages | `Home.jsx`, `AllPosts.jsx`, `Post.jsx`, `PostForm.jsx` (auth via `Auth.jsx` component) |
+| Syntax highlighting | `highlight.js` (`hljs.highlightElement` in `Post.jsx`; token CSS in `index.css`) |
+| Image resize | `src/utils/imageResize.js` (client-side downscale ≤1600px / ~85% before upload) |
 | Notifications | `react-hot-toast` (install) + `<Toaster>` in `App.jsx` |

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import PageLoader from "./PageLoader.jsx";
 
 export default function Protected({ children, authentication = true }) {
   const navigate = useNavigate();
@@ -15,5 +16,5 @@ export default function Protected({ children, authentication = true }) {
       navigate("/");
     }
   }, [authStatus, navigate, authentication, loading]);
-  return loading ? <h1>Loading...</h1> : <> {children} </>;
+  return loading ? <PageLoader /> : <> {children} </>;
 }

@@ -3,9 +3,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+  --font-sans: "Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, sans-serif;
-  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
     monospace;
 }
@@ -24,40 +25,40 @@
   }
 
   body {
-    @apply bg-stone-50 font-sans text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100;
+    @apply bg-stone-50 font-sans text-stone-900 antialiased dark:bg-[#0a0a0c] dark:text-white;
   }
 
   ::selection {
-    @apply bg-indigo-500/20;
+    @apply bg-indigo-500/20 dark:bg-pink-500/30;
   }
 }
 
 /* Rendered post content (sanitized HTML from the RTE) */
 .post-content {
-  @apply text-stone-700 dark:text-stone-300;
+  @apply font-display text-xl leading-relaxed text-stone-800 dark:text-white;
 }
 
 .post-content h1,
 .post-content h2,
 .post-content h3,
 .post-content h4 {
-  @apply font-display font-semibold text-stone-900 dark:text-stone-100;
+  @apply font-display text-stone-900 dark:text-white;
 }
 
 .post-content h1 {
-  @apply mt-10 mb-4 text-3xl;
+  @apply mt-10 mb-4 text-3xl font-semibold;
 }
 
 .post-content h2 {
-  @apply mt-8 mb-3 text-2xl;
+  @apply mt-12 mb-6 text-3xl font-bold;
 }
 
 .post-content h3 {
-  @apply mt-6 mb-2 text-xl;
+  @apply mt-6 mb-2 text-xl font-semibold;
 }
 
 .post-content h4 {
-  @apply mt-5 mb-2 text-lg;
+  @apply mt-5 mb-2 text-lg font-semibold;
 }
 
 .post-content p {
@@ -65,7 +66,7 @@
 }
 
 .post-content a {
-  @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition-colors hover:text-indigo-500 dark:text-indigo-400 dark:decoration-indigo-500/40 dark:hover:text-indigo-300;
+  @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition-colors hover:text-indigo-500 dark:text-pink-400 dark:decoration-pink-500/40 dark:hover:text-pink-300;
 }
 
 .post-content ul {
@@ -81,19 +82,24 @@
 }
 
 .post-content blockquote {
-  @apply my-6 border-l-4 border-indigo-300 pl-4 italic text-stone-600 dark:border-indigo-500/50 dark:text-stone-300;
+  @apply my-10 border-l-4 border-indigo-600 pl-6 font-display text-2xl leading-relaxed font-medium italic text-stone-600 dark:border-pink-500 dark:bg-pink-500/5 dark:p-8 dark:rounded-r-xl dark:text-pink-100;
 }
 
 .post-content code {
-  @apply rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm text-stone-800 dark:bg-stone-800 dark:text-stone-100;
+  @apply rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm text-stone-800 dark:bg-zinc-800 dark:text-white;
 }
 
 .post-content pre {
-  @apply my-6 overflow-x-auto rounded-lg bg-stone-900 p-4 font-mono text-sm leading-relaxed text-stone-100 dark:bg-stone-800;
+  @apply my-8 overflow-x-auto rounded-xl bg-stone-100 p-8 font-mono text-sm leading-normal text-stone-700 dark:bg-[#111114] dark:border dark:border-white/10 dark:shadow-inner dark:text-zinc-100;
 }
 
 .post-content pre code {
   @apply bg-transparent p-0 text-inherit;
+}
+
+.post-content pre code.hljs {
+  background: transparent;
+  padding: 0;
 }
 
 .post-content img {
@@ -106,15 +112,121 @@
 
 .post-content th,
 .post-content td {
-  @apply border border-stone-200 px-3 py-2 dark:border-stone-700;
+  @apply border border-stone-200 px-3 py-2 dark:border-white/15;
 }
 
 .post-content th {
-  @apply bg-stone-100 text-left font-semibold dark:bg-stone-800;
+  @apply bg-stone-100 text-left font-semibold dark:bg-zinc-800;
 }
 
 .post-content hr {
-  @apply my-8 border-stone-200 dark:border-stone-800;
+  @apply my-8 border-stone-200 dark:border-white/10;
+}
+
+/* Syntax highlighting (highlight.js) — indigo/violet on light, neon pink/violet on dark */
+.hljs-comment,
+.hljs-quote {
+  color: #a8a29e;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-name,
+.hljs-tag {
+  color: #7c3aed;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #0d9488;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-symbol {
+  color: #db2777;
+}
+
+.hljs-title,
+.hljs-function,
+.hljs-section {
+  color: #4f46e5;
+}
+
+.hljs-built_in,
+.hljs-type {
+  color: #9333ea;
+}
+
+.hljs-attr,
+.hljs-selector-attr,
+.hljs-selector-class {
+  color: #0891b2;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params {
+  color: #44403c;
+}
+
+.hljs-meta,
+.hljs-doctag {
+  color: #78716c;
+}
+
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #71717a;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-name,
+.dark .hljs-tag {
+  color: #ff2d78;
+}
+
+.dark .hljs-string,
+.dark .hljs-regexp,
+.dark .hljs-addition {
+  color: #a78bfa;
+}
+
+.dark .hljs-number,
+.dark .hljs-literal,
+.dark .hljs-symbol {
+  color: #f472b6;
+}
+
+.dark .hljs-title,
+.dark .hljs-function,
+.dark .hljs-section {
+  color: #ff8ab8;
+}
+
+.dark .hljs-built_in,
+.dark .hljs-type {
+  color: #c084fc;
+}
+
+.dark .hljs-attr,
+.dark .hljs-selector-attr,
+.dark .hljs-selector-class {
+  color: #f9a8d4;
+}
+
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-params {
+  color: #e4e4e7;
+}
+
+.dark .hljs-meta,
+.dark .hljs-doctag {
+  color: #a1a1aa;
 }
 
 @media (prefers-reduced-motion: reduce) {

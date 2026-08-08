@@ -15,9 +15,9 @@ function PostCard({
   return (
     <Link
       to={`/post/${$id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] dark:border-stone-800 dark:bg-stone-900"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#111114]"
     >
-      <div className="aspect-video w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+      <div className="aspect-video w-full overflow-hidden bg-stone-100 dark:bg-zinc-800">
         {featuredImage ? (
           <img
             src={appwriteService.getFileView(featuredImage)}
@@ -25,7 +25,7 @@ function PostCard({
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-stone-400 dark:text-stone-500">
+          <div className="flex h-full w-full items-center justify-center text-stone-400 dark:text-zinc-500">
             <svg
               width="40"
               height="40"
@@ -46,18 +46,18 @@ function PostCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5">
-        <h3 className="font-display text-xl leading-snug font-semibold text-stone-900 line-clamp-2 dark:text-stone-100">
+        <h3 className="font-display text-xl leading-snug font-semibold text-stone-900 line-clamp-2 dark:text-white">
           {title}
         </h3>
-        <p className="text-sm leading-relaxed text-stone-500 line-clamp-2 dark:text-stone-400">
+        <p className="text-sm leading-relaxed text-stone-500 line-clamp-2 dark:text-zinc-400">
           {stripHtml(content)}
         </p>
 
-        <div className="mt-auto flex items-center gap-3 border-t border-stone-100 pt-4 dark:border-stone-800">
+        <div className="mt-auto flex items-center gap-3 border-t border-stone-100 pt-4 dark:border-white/10">
           {authorName && <AuthorChip name={authorName} />}
           <time
             dateTime={$createdAt}
-            className="text-xs text-stone-400 dark:text-stone-500"
+            className="text-xs text-stone-400 dark:text-zinc-500"
           >
             {formatDate($createdAt)}
           </time>

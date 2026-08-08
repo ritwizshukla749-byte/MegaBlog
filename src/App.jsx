@@ -51,7 +51,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100">
+    <div className="flex min-h-screen flex-col bg-stone-50 text-stone-900 dark:bg-[#0a0a0c] dark:text-white">
       <Header />
       <main className="flex-1">
         <Outlet />

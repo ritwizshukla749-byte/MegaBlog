@@ -7,8 +7,7 @@ import Input from "./Input";
 import Button from "./Button";
 import Select from "./Select";
 import RTE from "./RTE";
-import Signup from "./Signup";
-import Login from "./Login";
+import Auth from "./Auth";
 import PostForm from "./post-form/PostForm.jsx";
 import PostCard from "./PostCard.jsx";
 import AuthLayout from "./AuthLayout.jsx";
@@ -25,8 +24,7 @@ export {
   Button,
   Select,
   RTE,
-  Signup,
-  Login,
+  Auth,
   PostForm,
   PostCard,
   AuthLayout,

@@ -11,7 +11,7 @@ const Select = forwardRef(function Select(
       {label && (
         <label
           htmlFor={id}
-          className="mb-1.5 block text-sm font-medium text-stone-600 dark:text-stone-400"
+          className="mb-1.5 block text-sm font-semibold text-stone-700 dark:text-zinc-300"
         >
           {label}
         </label>
@@ -21,7 +21,7 @@ const Select = forwardRef(function Select(
           id={id}
           ref={ref}
           aria-invalid={error ? true : undefined}
-          className={`h-11 w-full appearance-none rounded-lg border border-stone-200 bg-white px-3.5 pr-10 text-sm text-stone-900 shadow-sm transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100 ${
+          className={`h-11 w-full appearance-none rounded-lg border border-stone-300 bg-white px-4 pr-10 text-sm text-stone-900 shadow-sm transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none dark:border-white/15 dark:bg-[#111114] dark:text-white ${
             error ? "border-rose-500 dark:border-rose-500" : ""
           }`}
           {...props}
@@ -45,7 +45,7 @@ const Select = forwardRef(function Select(
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-stone-400 dark:text-stone-500"
+          className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-stone-400 dark:text-zinc-500"
         >
           <path d="m6 9 6 6 6-6" />
         </svg>

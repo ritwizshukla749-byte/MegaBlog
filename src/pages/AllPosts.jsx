@@ -42,10 +42,10 @@ function AllPosts() {
     <section className="py-12 sm:py-16">
       <Container>
         <header className="mb-10 text-center sm:mb-12">
-          <h1 className="font-display text-3xl font-semibold text-stone-900 dark:text-stone-100 sm:text-4xl">
+          <h1 className="font-display text-3xl font-semibold text-stone-900 dark:text-white sm:text-4xl">
             All Posts
           </h1>
-          <p className="mt-3 text-base text-stone-500 dark:text-stone-400">
+          <p className="mt-3 text-base text-stone-500 dark:text-zinc-400">
             Stories worth reading, written by our community.
           </p>
         </header>
@@ -69,7 +69,7 @@ function AllPosts() {
           </div>
         ) : posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-stone-400 dark:bg-zinc-800 dark:text-zinc-500">
               <svg
                 width="28"
                 height="28"
@@ -85,10 +85,10 @@ function AllPosts() {
                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
               </svg>
             </div>
-            <h2 className="font-display text-xl font-semibold text-stone-900 dark:text-stone-100">
+            <h2 className="font-display text-xl font-semibold text-stone-900 dark:text-white">
               No posts yet
             </h2>
-            <p className="max-w-sm text-sm text-stone-500 dark:text-stone-400">
+            <p className="max-w-sm text-sm text-stone-500 dark:text-zinc-400">
               Be the first to share a story with the community.
             </p>
             <Link to="/add-post">

@@ -4,12 +4,11 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App.jsx";
 import store from "./store/store.js";
-import { AuthLayout, Login, PageLoader } from "./components/index.js";
+import { Auth, AuthLayout, PageLoader } from "./components/index.js";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 /* eslint-disable react-refresh/only-export-components */
 const Home = lazy(() => import("./pages/Home.jsx"));
-const Signup = lazy(() => import("./pages/Signup.jsx"));
 const AllPosts = lazy(() => import("./pages/AllPosts.jsx"));
 const AddPost = lazy(() => import("./pages/AddPost.jsx"));
 const EditPost = lazy(() => import("./pages/EditPost.jsx"));
@@ -32,7 +31,7 @@ const router = createBrowserRouter([
         path: "/login",
         element: (
           <AuthLayout authentication={false}>
-            <Login />
+            <Auth initialTab="login" />
           </AuthLayout>
         ),
       },
@@ -40,9 +39,7 @@ const router = createBrowserRouter([
         path: "/signup",
         element: (
           <AuthLayout authentication={false}>
-            <Suspense fallback={<PageLoader />}>
-              <Signup />
-            </Suspense>
+            <Auth initialTab="signup" />
           </AuthLayout>
         ),
       },
