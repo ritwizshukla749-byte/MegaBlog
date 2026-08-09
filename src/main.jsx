@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App.jsx";
 import store from "./store/store.js";
-import { Auth, AuthLayout, PageLoader } from "./components/index.js";
+import { Auth, AuthLayout, ErrorBoundary, PageLoader } from "./components/index.js";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 /* eslint-disable react-refresh/only-export-components */
@@ -88,7 +88,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <ErrorBoundary>
+        <RouterProvider router={router} />
+      </ErrorBoundary>
     </Provider>
   </React.StrictMode>,
 );

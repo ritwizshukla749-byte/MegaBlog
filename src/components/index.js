@@ -13,6 +13,7 @@ import PostCard from "./PostCard.jsx";
 import AuthLayout from "./AuthLayout.jsx";
 import PageLoader from "./PageLoader.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
+import ErrorBoundary from "./ErrorBoundary.jsx";
 
 export {
   Header,
@@ -30,4 +31,5 @@ export {
   AuthLayout,
   PageLoader,
   ThemeToggle,
+  ErrorBoundary,
 };

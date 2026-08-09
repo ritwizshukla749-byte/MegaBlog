@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Button, Input, Select, RTE } from "../index";
 import appwriteService from "../../appwrite/config";
-import { useNavigate } from "react-router-dom";
+import { useBlocker, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import resizeImage from "../../utils/imageResize";
+import validateImageFile from "../../utils/validateImageFile";
 
 function Panel({ title, children }) {
   return (
@@ -26,7 +27,7 @@ function PostForm({ post }) {
     setValue,
     control,
     getValues,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({
       defaultValues: {
         title: post?.title || "",
@@ -44,9 +45,33 @@ function PostForm({ post }) {
     post?.featuredImage ? appwriteService.getFileView(post.featuredImage) : null,
   );
   const [submitting, setSubmitting] = useState(false);
+  const [imageProcessing, setImageProcessing] = useState(false);
   const objectUrlRef = useRef(null);
   const submittingRef = useRef(false);
   const mountedRef = useRef(true);
+  const submittedRef = useRef(false);
+  const debounceTimerRef = useRef(null);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  const blocker = useBlocker(() => isDirty && !submittedRef.current);
+
+  useEffect(() => {
+    if (blocker.state !== "blocked") return;
+    const leave = window.confirm(
+      "You have unsaved changes. Leave without saving?",
+    );
+    if (leave) blocker.proceed();
+    else blocker.reset();
+  }, [blocker]);
 
   useEffect(() => {
     return () => {
@@ -58,6 +83,10 @@ function PostForm({ post }) {
   const handleFile = useCallback(async (f) => {
     if (!f) return;
     try {
+      await validateImageFile(f);
+      if (!mountedRef.current) return;
+
+      setImageProcessing(true);
       const resized = await resizeImage(f);
       if (!mountedRef.current) return;
 
@@ -69,13 +98,20 @@ function PostForm({ post }) {
     } catch (err) {
       console.error("Error processing image:", err);
       if (mountedRef.current) {
-        toast.error("Could not process the image.");
+        toast.error(err?.message || "Could not process the image.");
       }
+    } finally {
+      if (mountedRef.current) setImageProcessing(false);
     }
   }, []);
 
   const submit = async (data) => {
     if (submittingRef.current) return;
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+      data = { ...data, slug: slugTransform(data.title) };
+    }
     submittingRef.current = true;
     setSubmitting(true);
     try {
@@ -89,13 +125,23 @@ function PostForm({ post }) {
         if (file) {
           const uploaded = await appwriteService.uploadFile(file);
           if (uploaded) {
+            try {
+              await appwriteService.updatePost(post.$id, {
+                featuredImage: uploaded.$id,
+              });
+            } catch (err) {
+              await appwriteService
+                .deleteFile(uploaded.$id)
+                .catch((cleanupErr) =>
+                  console.error("Failed to clean up orphaned file:", cleanupErr),
+                );
+              throw err;
+            }
             await appwriteService.deleteFile(post.featuredImage);
-            await appwriteService.updatePost(post.$id, {
-              featuredImage: uploaded.$id,
-            });
           }
         }
 
+        submittedRef.current = true;
         toast.success("Post updated");
         navigate(`/post/${post.$id}`);
       } else {
@@ -107,27 +153,52 @@ function PostForm({ post }) {
         const uploaded = await appwriteService.uploadFile(file);
         if (!uploaded) throw new Error("Upload failed");
 
+        const uploadedFileId = uploaded.$id;
         let dbPost;
+
         try {
           dbPost = await appwriteService.createPost({
             ...data,
-            featuredImage: uploaded.$id,
+            featuredImage: uploadedFileId,
             userId: userData.$id,
           });
         } catch (err) {
           if (err?.code === 409 || err?.response?.status === 409) {
-            dbPost = await appwriteService.createPost({
-              ...data,
-              featuredImage: uploaded.$id,
-              userId: userData.$id,
-              slug: `${data.slug}-${Date.now()}`,
-            });
+            try {
+              dbPost = await appwriteService.createPost({
+                ...data,
+                featuredImage: uploadedFileId,
+                userId: userData.$id,
+                slug: `${data.slug}-${Date.now()}`,
+              });
+            } catch (retryErr) {
+              await appwriteService
+                .deleteFile(uploadedFileId)
+                .catch((cleanupErr) =>
+                  console.error("Failed to clean up orphaned file:", cleanupErr),
+                );
+              throw retryErr;
+            }
           } else {
+            await appwriteService
+              .deleteFile(uploadedFileId)
+              .catch((cleanupErr) =>
+                console.error("Failed to clean up orphaned file:", cleanupErr),
+              );
             throw err;
           }
         }
-        if (!dbPost) throw new Error("Create failed");
 
+        if (!dbPost) {
+          await appwriteService
+            .deleteFile(uploadedFileId)
+            .catch((cleanupErr) =>
+              console.error("Failed to clean up orphaned file:", cleanupErr),
+            );
+          throw new Error("Create failed");
+        }
+
+        submittedRef.current = true;
         toast.success(data.status ? "Post published" : "Post saved as draft");
         navigate(`/post/${dbPost.$id}`);
       }
@@ -151,17 +222,34 @@ function PostForm({ post }) {
     return "";
   }, []);
 
+  const debouncedSlugUpdate = useCallback(
+    (title) => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = setTimeout(() => {
+        debounceTimerRef.current = null;
+        setValue("slug", slugTransform(title), { shouldValidate: true });
+      }, 300);
+    },
+    [setValue, slugTransform],
+  );
+
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
-        setValue("slug", slugTransform(value.title), { shouldValidate: true });
+        debouncedSlugUpdate(value.title);
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [watch, slugTransform, setValue]);
+  }, [watch, debouncedSlugUpdate]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(submit)} className="mx-auto max-w-6xl">
@@ -273,34 +361,62 @@ function PostForm({ post }) {
               onDrop={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (imageProcessing) return;
                 handleFile(e.dataTransfer.files?.[0]);
               }}
-              className="group flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-stone-300 bg-stone-50 px-6 py-10 text-center transition-colors hover:border-indigo-400 hover:bg-indigo-50/50 dark:border-white/15 dark:bg-[#0a0a0c]/50 dark:hover:border-pink-500/60 dark:hover:bg-pink-500/5"
+              className={`group flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
+                imageProcessing
+                  ? "border-stone-300 bg-stone-50 dark:border-white/15 dark:bg-[#0a0a0c]/50"
+                  : "border-stone-300 bg-stone-50 hover:border-indigo-400 hover:bg-indigo-50/50 dark:border-white/15 dark:bg-[#0a0a0c]/50 dark:hover:border-pink-500/60 dark:hover:bg-pink-500/5"
+              }`}
             >
               <input
                 type="file"
                 accept="image/png, image/jpg, image/jpeg, image/gif"
                 className="sr-only"
-                onChange={(e) => handleFile(e.target.files?.[0])}
+                disabled={imageProcessing}
+                onChange={(e) => {
+                  if (imageProcessing) return;
+                  handleFile(e.target.files?.[0]);
+                }}
               />
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M12 16V4m0 0 4 4m-4-4L8 8" />
-                  <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-                </svg>
+                {imageProcessing ? (
+                  <svg
+                    className="animate-spin"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                ) : (
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 16V4m0 0 4 4m-4-4L8 8" />
+                    <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                  </svg>
+                )}
               </span>
               <span className="text-sm font-medium text-stone-600 dark:text-zinc-300">
-                Drag &amp; drop or click to upload
+                {imageProcessing
+                  ? "Processing image..."
+                  : "Drag & drop or click to upload"}
               </span>
               <span className="text-xs text-stone-400 dark:text-zinc-500">
                 PNG, JPG, JPEG, GIF · Max 5MB
