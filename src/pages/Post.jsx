@@ -41,6 +41,7 @@ export default function Post() {
       .catch((err) => {
         if (cancelled) return;
         console.error("Error fetching post:", err);
+        toast.error("Could not load the post.");
         navigate("/");
       });
 

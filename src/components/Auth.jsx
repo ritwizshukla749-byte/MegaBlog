@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import authService from "../appwrite/auth";
 import { login } from "../store/authSlice";
 import { Button, Input, Logo } from "./index";
@@ -71,7 +72,7 @@ function UserIcon() {
 function Auth({ initialTab = "login" }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -87,6 +88,7 @@ function Auth({ initialTab = "login" }) {
         if (session) {
           const userData = await authService.getCurrentUser();
           if (userData) dispatch(login({ userData }));
+          toast.success("Welcome back!");
           navigate("/");
         }
       } else {
@@ -95,6 +97,7 @@ function Auth({ initialTab = "login" }) {
           const userData = await authService.getCurrentUser();
           if (userData) {
             dispatch(login({ userData }));
+            toast.success("Account created. Welcome to MegaBlog!");
             navigate("/");
           }
         }
@@ -157,7 +160,8 @@ function Auth({ initialTab = "login" }) {
                   label="Full Name"
                   placeholder="Enter your full name"
                   icon={<UserIcon />}
-                  {...register("name", { required: true })}
+                  error={errors.name?.message}
+                  {...register("name", { required: "Full name is required" })}
                 />
               )}
               <Input
@@ -165,8 +169,9 @@ function Auth({ initialTab = "login" }) {
                 type="email"
                 placeholder="Enter your email"
                 icon={<EnvelopeIcon />}
+                error={errors.email?.message}
                 {...register("email", {
-                  required: true,
+                  required: "Email is required",
                   validate: {
                     matchPattern: (value) =>
                       /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
@@ -179,7 +184,8 @@ function Auth({ initialTab = "login" }) {
                 type="password"
                 placeholder="Enter your password"
                 icon={<LockIcon />}
-                {...register("password", { required: true })}
+                error={errors.password?.message}
+                {...register("password", { required: "Password is required" })}
               />
               <Button
                 type="submit"

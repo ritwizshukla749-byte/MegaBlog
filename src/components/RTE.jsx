@@ -3,7 +3,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { Controller, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
 
-export default function RTE({ name, control, label, defaultValue = "" }) {
+export default function RTE({ name, control, label, defaultValue = "", rules }) {
   const isDark = useSelector((state) => state.theme.mode === "dark");
   const fieldName = name || "content";
   const currentContent = useWatch({ control, name: fieldName, defaultValue });
@@ -26,44 +26,52 @@ export default function RTE({ name, control, label, defaultValue = "" }) {
       <Controller
         name={name || "content"}
         control={control}
-        render={({ field: { onChange } }) => (
-          <Editor
-            key={isDark ? "dark" : "light"}
-            initialValue={initialContent}
-            tinymceScriptSrc="/tinymce/tinymce.min.js"
-            init={{
-              initialValue: initialContent,
-              height: 500,
-              menubar: true,
-              skin: isDark ? "oxide-dark" : "oxide",
-              content_css: isDark ? "dark" : "default",
-              placeholder: "Start writing your editorial piece...",
-              plugins: [
-                "advlist",
-                "autolink",
-                "lists",
-                "link",
-                "image",
-                "charmap",
-                "preview",
-                "anchor",
-                "searchreplace",
-                "visualblocks",
-                "code",
-                "fullscreen",
-                "insertdatetime",
-                "media",
-                "table",
-                "help",
-                "wordcount",
-              ],
-              toolbar:
-                "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help",
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-            }}
-            onEditorChange={onChange}
-          />
+        rules={rules}
+        render={({ field: { onChange }, fieldState: { error } }) => (
+          <>
+            <Editor
+              key={isDark ? "dark" : "light"}
+              initialValue={initialContent}
+              tinymceScriptSrc="/tinymce/tinymce.min.js"
+              init={{
+                initialValue: initialContent,
+                height: 500,
+                menubar: true,
+                skin: isDark ? "oxide-dark" : "oxide",
+                content_css: isDark ? "dark" : "default",
+                placeholder: "Start writing your editorial piece...",
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "lists",
+                  "link",
+                  "image",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "searchreplace",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "help",
+                  "wordcount",
+                ],
+                toolbar:
+                  "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help",
+                content_style:
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+              }}
+              onEditorChange={onChange}
+            />
+            {error && (
+              <p className="mt-1.5 text-sm text-rose-500" role="alert">
+                {error.message}
+              </p>
+            )}
+          </>
         )}
       />
     </div>

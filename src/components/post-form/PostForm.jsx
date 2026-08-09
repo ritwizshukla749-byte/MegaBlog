@@ -19,8 +19,15 @@ function Panel({ title, children }) {
 }
 
 function PostForm({ post }) {
-  const { register, handleSubmit, watch, setValue, control, getValues } =
-    useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    getValues,
+    formState: { errors },
+  } = useForm({
       defaultValues: {
         title: post?.title || "",
         slug: post?.slug || "",
@@ -39,9 +46,11 @@ function PostForm({ post }) {
   const [submitting, setSubmitting] = useState(false);
   const objectUrlRef = useRef(null);
   const submittingRef = useRef(false);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     return () => {
+      mountedRef.current = false;
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
     };
   }, []);
@@ -50,6 +59,8 @@ function PostForm({ post }) {
     if (!f) return;
     try {
       const resized = await resizeImage(f);
+      if (!mountedRef.current) return;
+
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
       const url = URL.createObjectURL(resized);
       objectUrlRef.current = url;
@@ -57,7 +68,9 @@ function PostForm({ post }) {
       setImagePreview(url);
     } catch (err) {
       console.error("Error processing image:", err);
-      toast.error("Could not process the image.");
+      if (mountedRef.current) {
+        toast.error("Could not process the image.");
+      }
     }
   }, []);
 
@@ -159,7 +172,14 @@ function PostForm({ post }) {
               <Input
                 label="Title"
                 placeholder="Enter an engaging headline..."
-                {...register("title", { required: true })}
+                error={errors.title?.message}
+                {...register("title", {
+                  required: "Title is required",
+                  minLength: {
+                    value: 3,
+                    message: "Title must be at least 3 characters",
+                  },
+                })}
               />
 
               <div>
@@ -177,8 +197,9 @@ function PostForm({ post }) {
                     id="slug"
                     type="text"
                     placeholder="your-post-slug"
+                    aria-invalid={errors.slug ? true : undefined}
                     className="h-full w-full bg-transparent px-4 text-sm text-stone-900 outline-none placeholder:text-stone-400 dark:text-white dark:placeholder:text-zinc-500"
-                    {...register("slug", { required: true })}
+                    {...register("slug", { required: "Slug is required" })}
                     onInput={(e) => {
                       setValue("slug", slugTransform(e.currentTarget.value), {
                         shouldValidate: true,
@@ -186,6 +207,11 @@ function PostForm({ post }) {
                     }}
                   />
                 </div>
+                {errors.slug?.message && (
+                  <p className="mt-1.5 text-sm text-rose-500" role="alert">
+                    {errors.slug.message}
+                  </p>
+                )}
               </div>
 
               <RTE
@@ -193,6 +219,7 @@ function PostForm({ post }) {
                 name="content"
                 control={control}
                 defaultValue={getValues("content")}
+                rules={{ required: "Content is required" }}
               />
             </div>
           </Panel>
@@ -207,8 +234,9 @@ function PostForm({ post }) {
                   { label: "Inactive", value: false },
                 ]}
                 label="Status"
+                error={errors.status?.message}
                 {...register("status", {
-                  required: true,
+                  required: "Please choose a status",
                   setValueAs: (value) => value === true || value === "true",
                 })}
               />

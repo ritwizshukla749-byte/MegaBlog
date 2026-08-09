@@ -20,11 +20,15 @@ const required = {
 
 Object.entries(required).forEach(([, [envName, value]]) => {
   if (!value) {
-    console.error(
-      "MegaBlog: missing required environment variable",
-      envName,
-      "— add it to your .env file.",
-    );
+    if (import.meta.env.MODE === "development") {
+      console.error(
+        `MegaBlog: missing required environment variable ${envName} — add it to your .env file.`,
+      );
+    } else {
+      throw new Error(
+        "Configuration error: missing required environment variable",
+      );
+    }
   }
 });
 

@@ -35,19 +35,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    authService
-      .getCurrentUser()
-      .then((userData) => {
-        if (userData) {
-          dispatch(login({ userData }));
-        } else {
-          dispatch(logout());
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching user data:", err);
+    authService.getCurrentUser().then((userData) => {
+      if (userData) {
+        dispatch(login({ userData }));
+      } else {
         dispatch(logout());
-      });
+      }
+    });
   }, [dispatch]);
 
   return (

@@ -39,7 +39,10 @@ export class AuthService {
     try {
       return await this.account.get();
     } catch (error) {
-      console.log("Appwrite service :: getCurrentUser :: error", error);
+      // 401 = no active session — an expected state when logged out.
+      if (error?.code !== 401) {
+        console.error("Appwrite service :: getCurrentUser :: error", error);
+      }
     }
 
     return null;
@@ -48,11 +51,7 @@ export class AuthService {
 
   //Logout
   async logout() {
-    try {
-      return await this.account.deleteSessions();
-    } catch (error) {
-      console.log("Appwrite service :: logout :: error", error);
-    }
+    return await this.account.deleteSessions();
   }
 }
 

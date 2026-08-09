@@ -1,4 +1,5 @@
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import authService from "../../appwrite/auth.js";
 import { logout } from "../../store/authSlice.js";
 
@@ -10,9 +11,11 @@ function LogoutBtn() {
       .logout()
       .then(() => {
         dispatch(logout());
+        toast.success("Logged out");
       })
       .catch((err) => {
         console.error("Error during logout:", err);
+        toast.error("Could not log out. Please try again.");
       });
   };
 
