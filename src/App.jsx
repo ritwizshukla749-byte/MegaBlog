@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { useLocation, useOutlet } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
 import authService from "./appwrite/auth";
 import { login, logout } from "./store/authSlice";
@@ -8,9 +9,43 @@ import { THEME_KEY } from "./store/themeSlice";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -12 },
+};
+
+function AnimatedOutlet() {
+  const location = useLocation();
+  const outlet = useOutlet();
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) return <>{outlet}</>;
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={location.pathname}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+      >
+        {outlet}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function App() {
   const dispatch = useDispatch();
   const themeMode = useSelector((state) => state.theme.mode);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pathname]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", themeMode === "dark");
@@ -48,7 +83,7 @@ function App() {
     <div className="flex min-h-screen flex-col bg-stone-50 text-stone-900 dark:bg-[#0a0a0c] dark:text-white">
       <Header />
       <main className="flex-1">
-        <Outlet />
+        <AnimatedOutlet />
       </main>
       <Footer />
       <Toaster

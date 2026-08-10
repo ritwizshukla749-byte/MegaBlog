@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion, useReducedMotion } from "framer-motion";
 import appwriteService from "../appwrite/config";
 import { Button, Container, PostCard } from "../components/index";
 import PostCardSkeleton from "../components/PostCardSkeleton.jsx";
@@ -9,6 +10,27 @@ function AllPosts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const reduceMotion = useReducedMotion();
+
+  const gridVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.06,
+        delayChildren: reduceMotion ? 0 : 0.1,
+      },
+    },
+  };
+  const cardVariants = reduceMotion
+    ? { hidden: {}, show: {} }
+    : {
+        hidden: { opacity: 0, y: 12 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.35, ease: "easeOut" },
+        },
+      };
 
   useEffect(() => {
     let cancelled = false;
@@ -96,11 +118,18 @@ function AllPosts() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            variants={gridVariants}
+            initial="hidden"
+            animate="show"
+          >
             {posts.map((post) => (
-              <PostCard key={post.$id} {...post} />
+              <motion.div key={post.$id} variants={cardVariants}>
+                <PostCard {...post} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </Container>
     </section>

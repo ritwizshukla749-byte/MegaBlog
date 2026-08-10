@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { motion, useReducedMotion } from "framer-motion";
 import appwriteService from "../appwrite/config";
 import { Button, Container, PostCard } from "../components/index";
 import AuthorChip from "../components/AuthorChip.jsx";
@@ -74,6 +75,27 @@ function Home() {
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const authStatus = useSelector((state) => state.auth.status);
+  const reduceMotion = useReducedMotion();
+
+  const gridVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.06,
+        delayChildren: reduceMotion ? 0 : 0.1,
+      },
+    },
+  };
+  const cardVariants = reduceMotion
+    ? { hidden: {}, show: {} }
+    : {
+        hidden: { opacity: 0, y: 12 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.35, ease: "easeOut" },
+        },
+      };
 
   useEffect(() => {
     let cancelled = false;
@@ -191,16 +213,27 @@ function Home() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-12">
-            {featured && <FeaturedCard post={featured} />}
+          <motion.div
+            className="space-y-12"
+            variants={gridVariants}
+            initial="hidden"
+            animate="show"
+          >
+            {featured && (
+              <motion.div variants={cardVariants}>
+                <FeaturedCard post={featured} />
+              </motion.div>
+            )}
             {rest.length > 0 && (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {rest.map((post) => (
-                  <PostCard key={post.$id} {...post} />
+                  <motion.div key={post.$id} variants={cardVariants}>
+                    <PostCard {...post} />
+                  </motion.div>
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
       </Container>
     </section>
